@@ -45,6 +45,8 @@ export async function testSarvamApiKey(apiKey: string): Promise<boolean> {
 
 /**
  * Synthesizes a single line of speech via Sarvam AI Bulbul endpoint
+ * Routes through the /api/sarvam-tts serverless proxy on Vercel to prevent CORS blocks,
+ * and falls back to direct API if running in an environment with direct proxy support.
  */
 export async function synthesizeLineWithSarvam(
   text: string,
@@ -54,22 +56,54 @@ export async function synthesizeLineWithSarvam(
   apiKey: string,
   retryCount = 2
 ): Promise<string> {
-  const endpoint = 'https://api.sarvam.ai/text-to-speech';
-
-  // Sanitize text for TTS
   const sanitizedText = text.replace(/[*#_~`[\]()]/g, '').trim();
 
-  const payload: SarvamTtsRequest = {
+  const payload = {
+    text: sanitizedText,
     inputs: [sanitizedText],
+    language_code: languageCode,
     target_language_code: languageCode,
     speaker: speakerId,
     pitch: 0,
     pace: Math.max(0.7, Math.min(1.5, pace)),
     loudness: 1.5,
     speech_sample_rate: 22050,
+    output_audio_codec: 'wav',
     enable_preprocessing: true,
-    model: 'bulbul:v1'
+    model: 'bulbul:v3',
+    apiKey: apiKey.trim(),
   };
+
+  // 1. Try our Vercel Serverless Proxy endpoint first (bypasses browser CORS completely)
+  try {
+    const proxyResponse = await fetch('/api/sarvam-tts', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'api-subscription-key': apiKey.trim(),
+      },
+      body: JSON.stringify(payload),
+    });
+
+    if (proxyResponse.ok) {
+      const data = await proxyResponse.json();
+      if (data.audios && data.audios.length > 0 && data.audios[0]) {
+        return data.audios[0];
+      }
+    } else if (proxyResponse.status !== 404) {
+      const errorJson = await proxyResponse.json().catch(() => ({}));
+      const message = errorJson.message || errorJson.error || errorJson.detail || `Sarvam TTS proxy error ${proxyResponse.status}`;
+      throw new Error(message);
+    }
+  } catch (proxyErr: any) {
+    if (proxyErr.message && !proxyErr.message.includes('404') && !proxyErr.message.includes('Failed to fetch')) {
+      throw proxyErr;
+    }
+    // Proxy not available (e.g. static dev server), continue to direct call
+  }
+
+  // 2. Direct call to Sarvam AI REST endpoint
+  const endpoint = 'https://api.sarvam.ai/text-to-speech';
 
   try {
     const response = await fetch(endpoint, {
@@ -78,17 +112,16 @@ export async function synthesizeLineWithSarvam(
         'Content-Type': 'application/json',
         'api-subscription-key': apiKey.trim(),
       },
-      body: JSON.stringify(payload)
+      body: JSON.stringify(payload),
     });
 
     if (!response.ok) {
       if (response.status === 429 && retryCount > 0) {
-        // Rate limited, wait and retry
-        await new Promise(resolve => setTimeout(resolve, 1500));
+        await new Promise((resolve) => setTimeout(resolve, 1500));
         return synthesizeLineWithSarvam(text, speakerId, languageCode, pace, apiKey, retryCount - 1);
       }
       const errorJson = await response.json().catch(() => ({}));
-      throw new Error(errorJson.message || errorJson.detail || `Sarvam TTS failed with HTTP ${response.status}`);
+      throw new Error(errorJson.message || errorJson.detail || errorJson.error || `Sarvam TTS returned HTTP ${response.status}`);
     }
 
     const data: SarvamTtsResponse = await response.json();
@@ -98,8 +131,8 @@ export async function synthesizeLineWithSarvam(
 
     return data.audios[0];
   } catch (err: unknown) {
-    if (retryCount > 0) {
-      await new Promise(resolve => setTimeout(resolve, 1000));
+    if (retryCount > 0 && !(err instanceof Error && err.message.includes('401'))) {
+      await new Promise((resolve) => setTimeout(resolve, 1000));
       return synthesizeLineWithSarvam(text, speakerId, languageCode, pace, apiKey, retryCount - 1);
     }
     throw err instanceof Error ? err : new Error(String(err));

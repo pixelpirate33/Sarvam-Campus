@@ -383,6 +383,8 @@ export function App() {
                 onTimeUpdate={(t) => setCurrentTime(t)}
                 episodeTitle={currentEpisode.metadata.title}
                 stitchedBlob={stitchedBlob}
+                script={currentEpisode.script}
+                hasRealVoiceAudio={Boolean(currentEpisode.script && currentEpisode.script.some((s) => s.audioBase64))}
               />
             )}
 

@@ -12,6 +12,8 @@ import {
 } from 'lucide-react';
 import { formatTime, triggerDownload } from '../utils/formatters';
 import { AudioVisualizer } from './AudioVisualizer';
+import { ScriptLine } from '../types/podcast';
+import { speakScriptLine, stopWebSpeech } from '../services/webSpeechFallback';
 
 interface PodcastPlayerProps {
   audioUrl: string;
@@ -24,6 +26,8 @@ interface PodcastPlayerProps {
   onTimeUpdate: (time: number) => void;
   episodeTitle: string;
   stitchedBlob?: Blob;
+  script?: ScriptLine[];
+  hasRealVoiceAudio?: boolean;
 }
 
 export const PodcastPlayer: React.FC<PodcastPlayerProps> = ({
@@ -37,12 +41,15 @@ export const PodcastPlayer: React.FC<PodcastPlayerProps> = ({
   onTimeUpdate,
   episodeTitle,
   stitchedBlob,
+  script = [],
+  hasRealVoiceAudio = false,
 }) => {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [playbackRate, setPlaybackRate] = useState<number>(1);
   const [volume, setVolume] = useState<number>(0.9);
   const [isMuted, setIsMuted] = useState<boolean>(false);
   const [shared, setShared] = useState<boolean>(false);
+  const lastSpokenIndexRef = useRef<number>(-1);
 
   // Sync isPlaying with HTML5 audio element
   useEffect(() => {
@@ -53,8 +60,29 @@ export const PodcastPlayer: React.FC<PodcastPlayerProps> = ({
       audio.play().catch((err) => console.warn('Audio play request failed:', err));
     } else {
       audio.pause();
+      stopWebSpeech();
+      lastSpokenIndexRef.current = -1;
     }
   }, [isPlaying]);
+
+  // If in fallback speech mode (no Sarvam audio yet), speak lines with native browser human speech
+  useEffect(() => {
+    if (!isPlaying || hasRealVoiceAudio || script.length === 0) return;
+
+    const activeIndex = script.findIndex(
+      (line) =>
+        line.startTime !== undefined &&
+        line.endTime !== undefined &&
+        currentTime >= line.startTime &&
+        currentTime < line.endTime
+    );
+
+    if (activeIndex !== -1 && activeIndex !== lastSpokenIndexRef.current) {
+      lastSpokenIndexRef.current = activeIndex;
+      const line = script[activeIndex];
+      speakScriptLine(line.text, line.speaker);
+    }
+  }, [currentTime, isPlaying, hasRealVoiceAudio, script]);
 
   // Sync playback rate
   useEffect(() => {

@@ -45,16 +45,16 @@ export async function stitchAudioSegments(
         const audioBuffer = await ctx.decodeAudioData(arrayBuffer);
         decodedBuffers.push(audioBuffer);
       } else {
-        // Fallback: Generate procedural conversational audio for missing voice segments
-        const mockDuration = Math.max(3, (line.text.split(/\s+/).length / 2.5));
-        const syntheticBuffer = createSyntheticVoiceBuffer(ctx, line.speaker, mockDuration);
-        decodedBuffers.push(syntheticBuffer);
+        // Create clean silent buffer for timeline pacing without any beep-boop synthesizer noise
+        const mockDuration = Math.max(3.5, (line.text.split(/\s+/).length / 2.6));
+        const cleanBuffer = createCleanAudioBuffer(ctx, mockDuration);
+        decodedBuffers.push(cleanBuffer);
       }
     } catch (err) {
-      console.warn(`Failed to decode audio for line: "${line.text.slice(0, 30)}...", generating fallback buffer`, err);
-      const mockDuration = Math.max(3, (line.text.split(/\s+/).length / 2.5));
-      const fallbackBuffer = createSyntheticVoiceBuffer(ctx, line.speaker, mockDuration);
-      decodedBuffers.push(fallbackBuffer);
+      console.warn(`Could not decode audio segment for "${line.text.slice(0, 25)}...", using clean buffer`, err);
+      const mockDuration = Math.max(3.5, (line.text.split(/\s+/).length / 2.6));
+      const cleanBuffer = createCleanAudioBuffer(ctx, mockDuration);
+      decodedBuffers.push(cleanBuffer);
     }
   }
 
@@ -129,13 +129,11 @@ export async function stitchAudioSegments(
 }
 
 /**
- * Creates rich harmonic synthetic voice tones for demo mode or audio fallbacks.
- * Uses speech formant frequencies so Host 1 sounds like a deeper male voice
- * and Host 2 sounds like a higher melodic female voice with natural prosody envelopes.
+ * Creates clean studio buffer without any oscillator beep boop noise.
+ * Generates imperceptible high-fidelity studio acoustic presence.
  */
-export function createSyntheticVoiceBuffer(
+export function createCleanAudioBuffer(
   ctx: AudioContext,
-  speaker: 'Host 1' | 'Host 2',
   durationSeconds: number
 ): AudioBuffer {
   const sampleRate = 22050;
@@ -143,37 +141,9 @@ export function createSyntheticVoiceBuffer(
   const buffer = ctx.createBuffer(1, numSamples, sampleRate);
   const data = buffer.getChannelData(0);
 
-  // Fundamental frequency & formants
-  // Host 1: Male fundamental ~130Hz
-  // Host 2: Female fundamental ~220Hz
-  const isHost1 = speaker === 'Host 1';
-  const baseFreq = isHost1 ? 125 : 210;
-  const formant1 = isHost1 ? 500 : 700;
-  const formant2 = isHost1 ? 1500 : 2000;
-
-  // Generate speech-like modulated pulse train
+  // Studio room presence at -65dB (completely silent to human ear, avoids audio pops)
   for (let i = 0; i < numSamples; i++) {
-    const t = i / sampleRate;
-
-    // Speech syllable rhythm modulation (~4 syllables per second)
-    const syllableSwell = Math.max(0, Math.sin(t * Math.PI * 4.2)) * (0.6 + 0.4 * Math.sin(t * 1.8));
-
-    // Pitch inflection (intonation curve)
-    const pitchVibrato = 1 + 0.05 * Math.sin(t * 8) + 0.08 * Math.sin(t * 1.5);
-    const f0 = baseFreq * pitchVibrato;
-
-    // Harmonic synthesis with formants
-    const harm1 = Math.sin(2 * Math.PI * f0 * t) * 0.4;
-    const harm2 = Math.sin(2 * Math.PI * f0 * 2 * t) * 0.25;
-    const harmFormant1 = Math.sin(2 * Math.PI * formant1 * t) * 0.15;
-    const harmFormant2 = Math.sin(2 * Math.PI * formant2 * t) * 0.08;
-
-    // Envelope attack/release
-    let envelope = 1;
-    if (t < 0.1) envelope = t / 0.1;
-    else if (t > durationSeconds - 0.2) envelope = Math.max(0, (durationSeconds - t) / 0.2);
-
-    data[i] = (harm1 + harm2 + harmFormant1 + harmFormant2) * syllableSwell * envelope * 0.6;
+    data[i] = (Math.random() - 0.5) * 0.0001;
   }
 
   return buffer;
