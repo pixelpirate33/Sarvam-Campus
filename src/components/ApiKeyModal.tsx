@@ -18,7 +18,6 @@ export const ApiKeyModal: React.FC<ApiKeyModalProps> = ({
   onSaveKeys,
   onEnableDemoMode,
 }) => {
-  const [geminiKey, setGeminiKey] = useState(apiKeys.gemini);
   const [sarvamKey, setSarvamKey] = useState(apiKeys.sarvam);
   const [isTestingSarvam, setIsTestingSarvam] = useState(false);
   const [sarvamStatus, setSarvamStatus] = useState<'idle' | 'valid' | 'invalid'>('idle');
@@ -27,7 +26,6 @@ export const ApiKeyModal: React.FC<ApiKeyModalProps> = ({
 
   const handleSave = () => {
     onSaveKeys({
-      gemini: geminiKey.trim(),
       sarvam: sarvamKey.trim(),
     });
     onClose();
@@ -46,17 +44,17 @@ export const ApiKeyModal: React.FC<ApiKeyModalProps> = ({
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
       <div className="relative w-full max-w-lg bg-slate-900 border border-slate-700/80 rounded-2xl shadow-2xl p-6 overflow-hidden">
         {/* Glow Accent */}
-        <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute top-0 right-0 w-64 h-64 bg-orange-500/10 rounded-full blur-3xl pointer-events-none" />
 
         {/* Header */}
         <div className="flex items-center justify-between pb-4 border-b border-slate-800">
           <div className="flex items-center gap-3">
-            <div className="p-2.5 rounded-xl bg-indigo-500/10 border border-indigo-500/30 text-indigo-400">
+            <div className="p-2.5 rounded-xl bg-orange-500/10 border border-orange-500/30 text-orange-400">
               <Key className="w-5 h-5" />
             </div>
             <div>
-              <h2 className="text-lg font-bold text-white">API Configuration</h2>
-              <p className="text-xs text-slate-400">Connect your Gemini & Sarvam AI endpoints</p>
+              <h2 className="text-lg font-bold text-white">Sarvam AI Configuration</h2>
+              <p className="text-xs text-slate-400">100% powered by Sarvam (105B LLM + Bulbul TTS)</p>
             </div>
           </div>
           <button
@@ -69,41 +67,12 @@ export const ApiKeyModal: React.FC<ApiKeyModalProps> = ({
 
         {/* Content Fields */}
         <div className="space-y-4 py-5">
-          {/* Gemini API Key */}
-          <div className="space-y-1.5">
-            <div className="flex items-center justify-between">
-              <label className="text-xs font-semibold text-slate-200 flex items-center gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-blue-500" />
-                Google Gemini API Key
-              </label>
-              <a
-                href="https://aistudio.google.com/app/apikey"
-                target="_blank"
-                rel="noreferrer"
-                className="text-[11px] text-blue-400 hover:text-blue-300 flex items-center gap-1 transition-colors"
-              >
-                Get Gemini Key
-                <ExternalLink className="w-3 h-3" />
-              </a>
-            </div>
-            <input
-              type="password"
-              value={geminiKey}
-              onChange={(e) => setGeminiKey(e.target.value)}
-              placeholder="AIzaSy..."
-              className="w-full px-3.5 py-2.5 rounded-xl bg-slate-800/80 border border-slate-700 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all font-mono"
-            />
-            <p className="text-[11px] text-slate-400">
-              Used to generate the structured dialogue script, show notes, and artwork prompt.
-            </p>
-          </div>
-
           {/* Sarvam AI API Key */}
           <div className="space-y-1.5">
             <div className="flex items-center justify-between">
               <label className="text-xs font-semibold text-slate-200 flex items-center gap-1.5">
                 <span className="w-2 h-2 rounded-full bg-orange-500" />
-                Sarvam AI API Key
+                Sarvam AI API Subscription Key
               </label>
               <div className="flex items-center gap-2">
                 {sarvamKey && (
@@ -139,17 +108,17 @@ export const ApiKeyModal: React.FC<ApiKeyModalProps> = ({
             {sarvamStatus === 'valid' && (
               <div className="flex items-center gap-1.5 text-xs text-emerald-400">
                 <Check className="w-3.5 h-3.5" />
-                <span>Sarvam Bulbul endpoint connected successfully!</span>
+                <span>Sarvam endpoint connected successfully!</span>
               </div>
             )}
             {sarvamStatus === 'invalid' && (
               <div className="flex items-center gap-1.5 text-xs text-rose-400">
                 <AlertCircle className="w-3.5 h-3.5" />
-                <span>Could not verify key with Sarvam TTS. Check your balance or credentials.</span>
+                <span>Could not verify key with Sarvam. Check your subscription credentials.</span>
               </div>
             )}
             <p className="text-[11px] text-slate-400">
-              Powers voice synthesis for Host 1 & Host 2 across all Indic languages.
+              One single key powers both the <strong>Sarvam 105B LLM</strong> (conversational scriptwriting) and <strong>Sarvam Bulbul TTS</strong> (voice synthesis).
             </p>
           </div>
 
@@ -157,7 +126,7 @@ export const ApiKeyModal: React.FC<ApiKeyModalProps> = ({
           <div className="flex items-start gap-2.5 p-3 rounded-xl bg-slate-800/40 border border-slate-800 text-xs text-slate-400">
             <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
             <p>
-              Your API keys are stored exclusively in your browser&apos;s <code className="text-slate-300">localStorage</code>. They are sent directly to the official Sarvam and Google endpoints.
+              Your key is saved in your browser&apos;s <code className="text-slate-300">localStorage</code> and routed securely via the Vercel serverless proxy to Sarvam AI.
             </p>
           </div>
         </div>
@@ -171,7 +140,7 @@ export const ApiKeyModal: React.FC<ApiKeyModalProps> = ({
             }}
             className="w-full sm:w-auto text-xs px-3.5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors border border-slate-700"
           >
-            Try Demo Mode (No Keys Needed)
+            Try Demo Mode (No Key Needed)
           </button>
 
           <div className="flex items-center gap-2 w-full sm:w-auto">
@@ -183,9 +152,9 @@ export const ApiKeyModal: React.FC<ApiKeyModalProps> = ({
             </button>
             <button
               onClick={handleSave}
-              className="flex-1 sm:flex-none text-xs font-semibold px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white shadow-lg shadow-indigo-600/30 transition-all"
+              className="flex-1 sm:flex-none text-xs font-semibold px-5 py-2.5 rounded-xl bg-orange-600 hover:bg-orange-500 text-white shadow-lg shadow-orange-600/30 transition-all"
             >
-              Save Configuration
+              Save Key
             </button>
           </div>
         </div>

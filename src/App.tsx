@@ -14,7 +14,7 @@ import {
   ScriptLine,
 } from './types/podcast';
 import { SAMPLE_EPISODE_DATA, PresetTopic } from './services/mockData';
-import { generatePodcastScriptWithGemini } from './services/geminiService';
+import { generatePodcastScriptWithSarvam } from './services/sarvamChatService';
 import { synthesizeFullScript } from './services/sarvamService';
 import { stitchAudioSegments } from './services/audioStitcher';
 import { generateId } from './utils/formatters';
@@ -117,9 +117,9 @@ export function App() {
   const handleGeneratePodcast = async () => {
     setErrorMessage(null);
 
-    // If missing keys and not in demo mode, prompt user
-    const hasKeys = Boolean(apiKeys.gemini && apiKeys.sarvam);
-    if (!hasKeys && !isDemoMode) {
+    // If missing Sarvam key and not in demo mode, prompt user
+    const hasKey = Boolean(apiKeys.sarvam);
+    if (!hasKey && !isDemoMode) {
       setIsApiKeyModalOpen(true);
       return;
     }
@@ -129,17 +129,17 @@ export function App() {
     setCurrentTime(0);
 
     try {
-      // Step 1: Gemini Script Generation
+      // Step 1: Sarvam 105B LLM Script Generation
       setProgress({
         status: 'generating_script',
         currentStep: 1,
         totalSteps: 4,
-        message: 'Drafting conversational dual-host script with Gemini 3.8 Flash...',
+        message: 'Drafting conversational dual-host script with Sarvam 105B LLM...',
       });
 
       let scriptResult: { metadata: any; script: any[] };
 
-      if (isDemoMode || !apiKeys.gemini) {
+      if (isDemoMode || !apiKeys.sarvam) {
         // High quality demo fallback if offline or no keys
         await new Promise((r) => setTimeout(r, 1200));
         scriptResult = {
@@ -188,7 +188,7 @@ export function App() {
           ],
         };
       } else {
-        scriptResult = await generatePodcastScriptWithGemini(config, apiKeys.gemini);
+        scriptResult = await generatePodcastScriptWithSarvam(config, apiKeys.sarvam);
       }
 
       // Step 2: Artwork Setup

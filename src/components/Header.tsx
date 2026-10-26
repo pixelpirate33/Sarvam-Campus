@@ -45,26 +45,26 @@ export const Header: React.FC<HeaderProps> = ({
 
         {/* Right Nav & Status Pills */}
         <div className="flex items-center gap-3">
-          {/* Gemini Status Pill */}
-          <div className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-xs text-slate-300">
-            <span
-              className={`w-2 h-2 rounded-full ${
-                hasGemini ? 'bg-blue-400 shadow-sm shadow-blue-400' : 'bg-slate-600'
-              }`}
-            />
-            <span className="font-medium">Gemini 3.8 Flash</span>
-            {hasGemini && <CheckCircle2 className="w-3 h-3 text-blue-400 ml-0.5" />}
-          </div>
-
-          {/* Sarvam Status Pill */}
+          {/* Sarvam LLM Status Pill */}
           <div className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-xs text-slate-300">
             <span
               className={`w-2 h-2 rounded-full ${
                 hasSarvam ? 'bg-orange-400 shadow-sm shadow-orange-400' : 'bg-slate-600'
               }`}
             />
-            <span className="font-medium">Sarvam Bulbul</span>
+            <span className="font-medium">Sarvam 105B LLM</span>
             {hasSarvam && <CheckCircle2 className="w-3 h-3 text-orange-400 ml-0.5" />}
+          </div>
+
+          {/* Sarvam Bulbul TTS Status Pill */}
+          <div className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-xs text-slate-300">
+            <span
+              className={`w-2 h-2 rounded-full ${
+                hasSarvam ? 'bg-emerald-400 shadow-sm shadow-emerald-400' : 'bg-slate-600'
+              }`}
+            />
+            <span className="font-medium">Sarvam Bulbul v3</span>
+            {hasSarvam && <CheckCircle2 className="w-3 h-3 text-emerald-400 ml-0.5" />}
           </div>
 
           {/* Demo Mode Badge */}

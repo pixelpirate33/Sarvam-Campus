@@ -85,6 +85,6 @@ export interface LanguageOption {
 }
 
 export interface ApiKeys {
-  gemini: string;
   sarvam: string;
+  gemini?: string;
 }

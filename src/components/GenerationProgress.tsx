@@ -8,7 +8,7 @@ interface GenerationProgressProps {
 
 export const GenerationProgress: React.FC<GenerationProgressProps> = ({ progress }) => {
   const steps = [
-    { id: 1, label: 'Gemini Script & Show Notes', icon: FileText },
+    { id: 1, label: 'Sarvam 105B LLM Script', icon: FileText },
     { id: 2, label: 'Album Artwork Prompt', icon: ImageIcon },
     { id: 3, label: 'Sarvam Bulbul Voice Synthesis', icon: Mic },
     { id: 4, label: 'Audio Stitching & Timing', icon: Music },
