@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { ScriptLine } from '../types/podcast';
 import { formatTime, copyToClipboard, formatTranscriptMarkdown } from '../utils/formatters';
-import { Copy, Check, Play, UserCheck, Sparkles, ArrowDown } from 'lucide-react';
+import { Copy, Check, Play, Sparkles, ArrowDown } from 'lucide-react';
 
 interface TranscriptViewProps {
   script: ScriptLine[];

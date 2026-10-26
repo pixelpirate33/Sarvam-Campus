@@ -1,5 +1,5 @@
 import React from 'react';
-import { Radio, Key, Settings, Sparkles, CheckCircle2 } from 'lucide-react';
+import { Radio, Key, Settings, CheckCircle2 } from 'lucide-react';
 import { ApiKeys } from '../types/podcast';
 
 interface HeaderProps {

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Header } from './components/Header';
 import { ConfigPanel } from './components/ConfigPanel';
 import { GenerationProgress } from './components/GenerationProgress';
@@ -18,20 +18,16 @@ import { generatePodcastScriptWithGemini } from './services/geminiService';
 import { synthesizeFullScript } from './services/sarvamService';
 import { stitchAudioSegments } from './services/audioStitcher';
 import { generateId } from './utils/formatters';
-import { AlertTriangle, Sparkles, RefreshCw } from 'lucide-react';
+import { AlertTriangle, Sparkles } from 'lucide-react';
 
 export function App() {
   // 1. API Keys State with localStorage persistence & env fallback
   const [apiKeys, setApiKeys] = useState<ApiKeys>(() => {
+    const envGemini = (import.meta as any).env?.VITE_GEMINI_API_KEY || '';
+    const envSarvam = (import.meta as any).env?.VITE_SARVAM_API_KEY || '';
     return {
-      gemini:
-        localStorage.getItem('echocast_gemini_key') ||
-        (import.meta.env.VITE_GEMINI_API_KEY as string) ||
-        '',
-      sarvam:
-        localStorage.getItem('echocast_sarvam_key') ||
-        (import.meta.env.VITE_SARVAM_API_KEY as string) ||
-        '',
+      gemini: localStorage.getItem('echocast_gemini_key') || envGemini || '',
+      sarvam: localStorage.getItem('echocast_sarvam_key') || envSarvam || '',
     };
   });
 

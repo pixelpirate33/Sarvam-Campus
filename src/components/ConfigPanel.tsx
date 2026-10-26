@@ -32,8 +32,6 @@ export const ConfigPanel: React.FC<ConfigPanelProps> = ({
   isGenerating,
   onSelectPreset,
 }) => {
-  const [showAdvanced, setShowAdvanced] = useState(false);
-
   const handleLanguageChange = (langCode: string) => {
     const lang = SUPPORTED_LANGUAGES.find((l) => l.code === langCode);
     if (!lang) return;
