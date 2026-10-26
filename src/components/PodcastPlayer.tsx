@@ -28,6 +28,7 @@ interface PodcastPlayerProps {
   stitchedBlob?: Blob;
   script?: ScriptLine[];
   hasRealVoiceAudio?: boolean;
+  languageCode?: string;
 }
 
 export const PodcastPlayer: React.FC<PodcastPlayerProps> = ({
@@ -43,6 +44,7 @@ export const PodcastPlayer: React.FC<PodcastPlayerProps> = ({
   stitchedBlob,
   script = [],
   hasRealVoiceAudio = false,
+  languageCode = 'en-IN',
 }) => {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [playbackRate, setPlaybackRate] = useState<number>(1);
@@ -80,7 +82,7 @@ export const PodcastPlayer: React.FC<PodcastPlayerProps> = ({
     if (activeIndex !== -1 && activeIndex !== lastSpokenIndexRef.current) {
       lastSpokenIndexRef.current = activeIndex;
       const line = script[activeIndex];
-      speakScriptLine(line.text, line.speaker);
+      speakScriptLine(line.text, line.speaker, languageCode);
     }
   }, [currentTime, isPlaying, hasRealVoiceAudio, script]);
 

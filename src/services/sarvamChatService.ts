@@ -24,9 +24,19 @@ HOST SPECIFICATIONS:
 - Host 1 (${config.host1Name}): The lead anchor. Energetic, curious, introduces topics with punchy hooks, asks provocative questions.
 - Host 2 (${config.host2Name}): The expert analyst. Sharp, witty, brings unexpected analogies, statistics, and counter-perspectives.
 
-LANGUAGE REQUIREMENTS:
-- Primary Language: ${config.languageName} (${config.language}).
-- Write naturally in authentic conversational style as spoken by real podcast hosts.
+LANGUAGE REQUIREMENTS (STRICT):
+- Target Language: ${config.languageName} (Language Code: ${config.language}).
+- CRITICAL: Write the ENTIRE conversational script, episode title, tagline, synopsis, and key takeaways in the specified language!
+  - If language is 'hi-IN' (Hindi): Write strictly in conversational Hindi (Devanagari script, e.g. "नमस्ते दोस्तों, आज के इस एपिसोड में...").
+  - If language is 'ta-IN' (Tamil): Write strictly in natural spoken Tamil (Tamil script).
+  - If language is 'te-IN' (Telugu): Write strictly in natural spoken Telugu (Telugu script).
+  - If language is 'bn-IN' (Bengali): Write strictly in natural spoken Bengali (Bengali script).
+  - If language is 'mr-IN' (Marathi): Write strictly in natural spoken Marathi (Marathi script).
+  - If language is 'kn-IN' (Kannada): Write strictly in natural spoken Kannada (Kannada script).
+  - If language is 'ml-IN' (Malayalam): Write strictly in natural spoken Malayalam (Malayalam script).
+  - If language is 'gu-IN' (Gujarati): Write strictly in natural spoken Gujarati (Gujarati script).
+  - If language is 'pa-IN' (Punjabi): Write strictly in natural spoken Punjabi (Gurmukhi script).
+  - If language is 'en-IN' (Indian English): Write in fluent, natural Indian English with contemporary broadcast cadence.
 
 PACING & RULES:
 - Write exactly ${turnsTarget}.

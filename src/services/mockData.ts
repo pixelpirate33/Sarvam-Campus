@@ -5,77 +5,84 @@ export const SUPPORTED_LANGUAGES: LanguageOption[] = [
     code: 'en-IN',
     name: 'Indian English',
     flag: '🇮🇳',
-    popularSpeakers: { male: 'shubh', female: 'simran_en_customer' }
+    popularSpeakers: { male: 'shubh', female: 'simran' }
   },
   {
     code: 'hi-IN',
     name: 'Hindi (हिंदी)',
     flag: '🇮🇳',
-    popularSpeakers: { male: 'shubh', female: 'meera' }
+    popularSpeakers: { male: 'shubh', female: 'priya' }
   },
   {
     code: 'ta-IN',
     name: 'Tamil (தமிழ்)',
     flag: '🇮🇳',
-    popularSpeakers: { male: 'arvind', female: 'pavithra' }
+    popularSpeakers: { male: 'ratan', female: 'ishita' }
   },
   {
     code: 'te-IN',
     name: 'Telugu (తెలుగు)',
     flag: '🇮🇳',
-    popularSpeakers: { male: 'amartya', female: 'maitreyi' }
+    popularSpeakers: { male: 'shubh', female: 'neha' }
   },
   {
     code: 'bn-IN',
     name: 'Bengali (বাংলা)',
     flag: '🇮🇳',
-    popularSpeakers: { male: 'amol', female: 'meera' }
+    popularSpeakers: { male: 'rohan', female: 'shreya' }
   },
   {
     code: 'mr-IN',
     name: 'Marathi (मराठी)',
     flag: '🇮🇳',
-    popularSpeakers: { male: 'amol', female: 'ruchika' }
+    popularSpeakers: { male: 'shubh', female: 'pooja' }
   },
   {
     code: 'kn-IN',
     name: 'Kannada (ಕನ್ನಡ)',
     flag: '🇮🇳',
-    popularSpeakers: { male: 'arvind', female: 'pavithra' }
+    popularSpeakers: { male: 'ratan', female: 'kavitha' }
   },
   {
     code: 'ml-IN',
     name: 'Malayalam (മലയാളം)',
     flag: '🇮🇳',
-    popularSpeakers: { male: 'arvind', female: 'pavithra' }
+    popularSpeakers: { male: 'mani', female: 'priya' }
   },
   {
     code: 'gu-IN',
     name: 'Gujarati (ગુજરાતી)',
     flag: '🇮🇳',
-    popularSpeakers: { male: 'shubh', female: 'meera' }
+    popularSpeakers: { male: 'shubh', female: 'neha' }
   },
   {
     code: 'pa-IN',
     name: 'Punjabi (ਪੰਜਾਬੀ)',
     flag: '🇮🇳',
-    popularSpeakers: { male: 'shubh', female: 'simran_en_customer' }
+    popularSpeakers: { male: 'shubh', female: 'simran' }
   }
 ];
 
 export const SARVAM_VOICES: VoiceOption[] = [
-  // Male voices
-  { id: 'shubh', name: 'Shubh', gender: 'male', recommendedRole: 'Host 1', description: 'Energetic, charismatic tech host with clear articulation' },
+  // Official Sarvam Bulbul v3 Male Speakers
+  { id: 'shubh', name: 'Shubh', gender: 'male', recommendedRole: 'Host 1', description: 'Energetic, natural Indian lead anchor across Hindi & English' },
   { id: 'aditya', name: 'Aditya', gender: 'male', recommendedRole: 'Host 1', description: 'Deep, conversational, documentary style tone' },
-  { id: 'amartya', name: 'Amartya', gender: 'male', recommendedRole: 'Host 1', description: 'Warm, analytical, thoughtful conversationalist' },
-  { id: 'amol', name: 'Amol', gender: 'male', recommendedRole: 'Host 1', description: 'Natural, friendly, casual studio host' },
-  { id: 'arvind', name: 'Arvind', gender: 'male', recommendedRole: 'Host 1', description: 'Authoritative, clear broadcast journalism tone' },
-  // Female voices
-  { id: 'simran_en_customer', name: 'Simran', gender: 'female', recommendedRole: 'Host 2', description: 'Crisp, witty, expressive co-host persona' },
-  { id: 'meera', name: 'Meera', gender: 'female', recommendedRole: 'Host 2', description: 'Melodic, inquisitive, engaging storytelling voice' },
-  { id: 'pavithra', name: 'Pavithra', gender: 'female', recommendedRole: 'Host 2', description: 'Bright, knowledgeable, lively conversational cadence' },
-  { id: 'maitreyi', name: 'Maitreyi', gender: 'female', recommendedRole: 'Host 2', description: 'Sophisticated, articulate, insightful analyst voice' },
-  { id: 'ruchika', name: 'Ruchika', gender: 'female', recommendedRole: 'Host 2', description: 'Warm, spirited, relatable podcast co-host' }
+  { id: 'rahul', name: 'Rahul', gender: 'male', recommendedRole: 'Host 1', description: 'Youthful, friendly, modern casual host' },
+  { id: 'ratan', name: 'Ratan', gender: 'male', recommendedRole: 'Host 1', description: 'Clear, resonant South and North Indic voice' },
+  { id: 'rohan', name: 'Rohan', gender: 'male', recommendedRole: 'Host 1', description: 'Dynamic, versatile podcast conversationalist' },
+  { id: 'ashutosh', name: 'Ashutosh', gender: 'male', recommendedRole: 'Host 1', description: 'Authoritative, broadcast journalism tone in Hindi' },
+  { id: 'mani', name: 'Mani', gender: 'male', recommendedRole: 'Host 1', description: 'Rich, expressive South Indic regional voice' },
+  { id: 'dev', name: 'Dev', gender: 'male', recommendedRole: 'Host 1', description: 'Warm, calm, analytical podcast speaker' },
+
+  // Official Sarvam Bulbul v3 Female Speakers
+  { id: 'simran', name: 'Simran', gender: 'female', recommendedRole: 'Host 2', description: 'Crisp, witty, expressive co-host persona' },
+  { id: 'priya', name: 'Priya', gender: 'female', recommendedRole: 'Host 2', description: 'Warm, melodic, natural storytelling voice' },
+  { id: 'ritu', name: 'Ritu', gender: 'female', recommendedRole: 'Host 2', description: 'Lively, inquisitive, articulate podcast analyst' },
+  { id: 'neha', name: 'Neha', gender: 'female', recommendedRole: 'Host 2', description: 'Bright, knowledgeable, engaging voice' },
+  { id: 'kavya', name: 'Kavya', gender: 'female', recommendedRole: 'Host 2', description: 'Sophisticated, smooth, insightful narrator' },
+  { id: 'suhani', name: 'Suhani', gender: 'female', recommendedRole: 'Host 2', description: 'Expressive, friendly conversational Hindi speaker' },
+  { id: 'ishita', name: 'Ishita', gender: 'female', recommendedRole: 'Host 2', description: 'Modern, confident, articulate presenter' },
+  { id: 'kavitha', name: 'Kavitha', gender: 'female', recommendedRole: 'Host 2', description: 'Melodic South Indic narrator for Kannada/Tamil' }
 ];
 
 export interface PresetTopic {
@@ -97,7 +104,7 @@ export const PRESET_TOPICS: PresetTopic[] = [
     tagline: 'How 14 Billion monthly instant transactions reshaped a nation',
     language: 'en-IN',
     host1: 'shubh',
-    host2: 'simran_en_customer',
+    host2: 'simran',
     duration: 1
   },
   {
@@ -107,7 +114,7 @@ export const PRESET_TOPICS: PresetTopic[] = [
     tagline: 'Will software engineers write code or orchestrate autonomous agents?',
     language: 'en-IN',
     host1: 'aditya',
-    host2: 'maitreyi',
+    host2: 'kavya',
     duration: 1
   },
   {
@@ -117,7 +124,7 @@ export const PRESET_TOPICS: PresetTopic[] = [
     tagline: 'Inside ISRO\'s frugal engineering triumph at the Moon\'s south pole',
     language: 'en-IN',
     host1: 'shubh',
-    host2: 'pavithra',
+    host2: 'priya',
     duration: 1
   },
   {
@@ -126,8 +133,8 @@ export const PRESET_TOPICS: PresetTopic[] = [
     category: 'Cybersecurity & History',
     tagline: 'OPSEC failures, Bitcoin tracing, and the birth of modern cyber forensics',
     language: 'en-IN',
-    host1: 'arvind',
-    host2: 'simran_en_customer',
+    host1: 'ratan',
+    host2: 'simran',
     duration: 1
   }
 ];
@@ -141,7 +148,7 @@ export const SAMPLE_EPISODE_DATA: PodcastEpisode = {
     languageName: 'Indian English',
     host1Speaker: 'shubh',
     host1Name: 'Arjun',
-    host2Speaker: 'simran_en_customer',
+    host2Speaker: 'simran',
     host2Name: 'Priya',
     duration: 1,
     pace: 1.05,

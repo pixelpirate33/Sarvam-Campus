@@ -385,6 +385,7 @@ export function App() {
                 stitchedBlob={stitchedBlob}
                 script={currentEpisode.script}
                 hasRealVoiceAudio={Boolean(currentEpisode.script && currentEpisode.script.some((s) => s.audioBase64))}
+                languageCode={currentEpisode.config.language}
               />
             )}
 

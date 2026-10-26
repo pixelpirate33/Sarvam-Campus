@@ -28,14 +28,17 @@ export function speakScriptLine(
 
   const utterance = new SpeechSynthesisUtterance(text);
   speechUtterance = utterance;
+  utterance.lang = languageCode || 'en-IN';
 
   const voices = window.speechSynthesis.getVoices();
   const isHost1 = speaker === 'Host 1';
 
-  // Find natural Indic or English voices
-  const matchingVoices = voices.filter(
-    (v) => v.lang.includes('en') || v.lang.includes('hi') || v.lang.includes('IN')
+  // Target specific Indic language (e.g. 'hi' for Hindi, 'ta' for Tamil, 'te' for Telugu)
+  const langPrefix = (languageCode || 'en-IN').split('-')[0].toLowerCase();
+  const langVoices = voices.filter(
+    (v) => v.lang.toLowerCase().startsWith(langPrefix) || v.lang.toLowerCase().includes('in')
   );
+  const matchingVoices = langVoices.length > 0 ? langVoices : voices;
 
   if (isHost1) {
     // Male host voice
