@@ -134,7 +134,7 @@ export function App() {
         status: 'generating_script',
         currentStep: 1,
         totalSteps: 4,
-        message: 'Drafting conversational dual-host script with Gemini 2.5 Flash...',
+        message: 'Drafting conversational dual-host script with Gemini 3.8 Flash...',
       });
 
       let scriptResult: { metadata: any; script: any[] };

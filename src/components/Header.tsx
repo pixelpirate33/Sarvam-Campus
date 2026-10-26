@@ -52,7 +52,7 @@ export const Header: React.FC<HeaderProps> = ({
                 hasGemini ? 'bg-blue-400 shadow-sm shadow-blue-400' : 'bg-slate-600'
               }`}
             />
-            <span className="font-medium">Gemini 2.5</span>
+            <span className="font-medium">Gemini 3.8 Flash</span>
             {hasGemini && <CheckCircle2 className="w-3 h-3 text-blue-400 ml-0.5" />}
           </div>
 

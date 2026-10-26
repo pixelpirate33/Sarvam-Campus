@@ -13,7 +13,8 @@ export async function generatePodcastScriptWithGemini(
     throw new Error('Gemini API key is required. Please add your key in Settings or activate Demo Mode.');
   }
 
-  const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey.trim()}`;
+  // Primary model requested is gemini-3.8-flash, with automatic fallback for older/different API tiers
+  const candidateModels = ['gemini-3.8-flash', 'gemini-2.0-flash', 'gemini-1.5-flash'];
 
   const turnsTarget = config.duration === 1 ? '5 to 7 turns (approx 1 minute of speech)' :
                       config.duration === 3 ? '12 to 15 turns (approx 3 minutes of speech)' :
@@ -63,62 +64,78 @@ Respond ONLY with a valid, raw JSON object (without markdown code blocks, backti
   ]
 }`;
 
-  try {
-    const response = await fetch(endpoint, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        contents: [
-          {
-            parts: [{ text: systemPrompt }]
+  let lastError: Error | null = null;
+
+  for (const model of candidateModels) {
+    const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey.trim()}`;
+
+    try {
+      const response = await fetch(endpoint, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          contents: [
+            {
+              parts: [{ text: systemPrompt }]
+            }
+          ],
+          generationConfig: {
+            temperature: 0.7,
+            topK: 40,
+            topP: 0.95,
+            maxOutputTokens: 3072,
+            responseMimeType: 'application/json'
           }
-        ],
-        generationConfig: {
-          temperature: 0.7,
-          topK: 40,
-          topP: 0.95,
-          maxOutputTokens: 3072,
-          responseMimeType: 'application/json'
+        })
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        const errorMessage = errorData.error?.message || `Gemini API error (${response.status}: ${response.statusText})`;
+        // If model not found or deprecated, try next candidate model
+        if (response.status === 404 || errorMessage.includes('not found') || errorMessage.includes('no longer available')) {
+          lastError = new Error(errorMessage);
+          continue;
         }
-      })
-    });
+        throw new Error(errorMessage);
+      }
 
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      const errorMessage = errorData.error?.message || `Gemini API error (${response.status}: ${response.statusText})`;
-      throw new Error(errorMessage);
+      const data = await response.json();
+      const candidate = data.candidates?.[0];
+      const textOutput = candidate?.content?.parts?.[0]?.text;
+
+      if (!textOutput) {
+        throw new Error('Gemini API returned an empty response. Please verify the prompt or try again.');
+      }
+
+      // Clean any backticks or markdown wrapper if present
+      const cleanJson = textOutput.replace(/^```json\s*/i, '').replace(/^```\s*/, '').replace(/```$/i, '').trim();
+      const parsed = JSON.parse(cleanJson);
+
+      return {
+        metadata: {
+          title: parsed.title || config.topic,
+          tagline: parsed.tagline || 'An AI-powered conversational deep dive',
+          summary: parsed.summary || 'An insightful exploration of ' + config.topic,
+          keyTakeaways: parsed.keyTakeaways || [],
+          artworkPrompt: parsed.artworkPrompt || `Podcast cover artwork for ${config.topic}`
+        },
+        script: parsed.script.map((line: { speaker?: string; speakerName?: string; text: string }) => ({
+          speaker: (line.speaker === 'Host 2' ? 'Host 2' : 'Host 1') as 'Host 1' | 'Host 2',
+          speakerName: line.speakerName || (line.speaker === 'Host 2' ? config.host2Name : config.host1Name),
+          text: line.text.trim()
+        }))
+      };
+    } catch (err: unknown) {
+      lastError = err instanceof Error ? err : new Error(String(err));
+      // If it was an explicit network/auth error (not model not found), don't keep looping
+      if (lastError.message.includes('API_KEY_INVALID') || lastError.message.includes('API key not valid')) {
+        throw lastError;
+      }
     }
-
-    const data = await response.json();
-    const candidate = data.candidates?.[0];
-    const textOutput = candidate?.content?.parts?.[0]?.text;
-
-    if (!textOutput) {
-      throw new Error('Gemini API returned an empty response. Please verify the prompt or try again.');
-    }
-
-    // Clean any backticks or markdown wrapper if present
-    const cleanJson = textOutput.replace(/^```json\s*/i, '').replace(/^```\s*/, '').replace(/```$/i, '').trim();
-    const parsed = JSON.parse(cleanJson);
-
-    return {
-      metadata: {
-        title: parsed.title || config.topic,
-        tagline: parsed.tagline || 'An AI-powered conversational deep dive',
-        summary: parsed.summary || 'An insightful exploration of ' + config.topic,
-        keyTakeaways: parsed.keyTakeaways || [],
-        artworkPrompt: parsed.artworkPrompt || `Podcast cover artwork for ${config.topic}`
-      },
-      script: parsed.script.map((line: { speaker?: string; speakerName?: string; text: string }) => ({
-        speaker: (line.speaker === 'Host 2' ? 'Host 2' : 'Host 1') as 'Host 1' | 'Host 2',
-        speakerName: line.speakerName || (line.speaker === 'Host 2' ? config.host2Name : config.host1Name),
-        text: line.text.trim()
-      }))
-    };
-  } catch (err: unknown) {
-    console.error('Error generating script with Gemini:', err);
-    throw err instanceof Error ? err : new Error(String(err));
   }
+
+  throw lastError || new Error('Failed to generate script with Gemini API');
 }
